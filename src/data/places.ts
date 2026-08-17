@@ -2,6 +2,7 @@ export enum PlaceCategory {
   Restaurant = "餐廳",
   Attraction = "景點",
   Shopping = "購物",
+  Lodging = "住宿",
 }
 
 type BasePlace = {
@@ -26,7 +27,7 @@ type RestaurantPlace = BasePlace & {
 };
 
 type NonRestaurantPlace = BasePlace & {
-  category: PlaceCategory.Attraction | PlaceCategory.Shopping;
+  category: PlaceCategory.Attraction | PlaceCategory.Shopping | PlaceCategory.Lodging;
   tabelogUrl?: never;
 };
 
@@ -56,16 +57,26 @@ function draftRestaurant(
 }
 
 function draftNonRestaurant(
-  category: PlaceCategory.Attraction | PlaceCategory.Shopping,
+  category: PlaceCategory.Attraction | PlaceCategory.Shopping | PlaceCategory.Lodging,
   input: DraftPlaceInput,
 ): NonRestaurantPlace {
   return {
     ...input,
     nameJa: input.nameJa ?? input.name,
     category,
-    categoryEn: category === PlaceCategory.Attraction ? "ATTRACTION" : "SHOPPING",
+    categoryEn:
+      category === PlaceCategory.Attraction
+        ? "ATTRACTION"
+        : category === PlaceCategory.Shopping
+          ? "SHOPPING"
+          : "LODGING",
     address: input.address ?? "請參考 Google Maps",
-    stay: category === PlaceCategory.Attraction ? "建議停留 60–120 分鐘" : "建議停留 45–90 分鐘",
+    stay:
+      category === PlaceCategory.Attraction
+        ? "建議停留 60–120 分鐘"
+        : category === PlaceCategory.Shopping
+          ? "建議停留 45–90 分鐘"
+          : "住宿期間 4 晚",
     verified: true,
   };
 }
@@ -96,7 +107,7 @@ export const places: Place[] = [
     address: "沖繩縣浦添市西洲 3-1-1",
     hours: "10:00–22:00（部分設施不同）",
     stay: "建議停留 2–3 小時",
-    note: "臨海的大型購物中心，餐飲、電影院、超市與伴手禮選擇完整；適合從那霸往中北部移動時順遊。",
+    note: "臨海的大型購物中心，餐飲、電影院、超市與伴手禮選擇完整；二樓 Food Hall 採大片玻璃窗設計，靠窗座位可眺望浦添西海岸，傍晚也適合看夕陽。適合從那霸往中北部移動時順遊。",
     tags: ["海景", "餐飲", "電影院", "大型停車場"],
     maps: "https://www.google.com/maps/search/?api=1&query=San-A+Urasoe+West+Coast+PARCO+CITY",
     official: "https://www.parcocity.jp/",
@@ -135,8 +146,8 @@ export const places: Place[] = [
     id: "mille-mele-kokusai",
     name: "mille mele 國際通店",
     nameJa: "mille mele ミレメーレ",
-    note: "國際通的蘋果派專賣店；那霸機場二樓國內、國際航廈通道也可能遇到分店。",
-    tags: ["蘋果派", "甜點", "國際通"],
+    note: "來自鎌倉的蘋果派專賣店；除了國際通之外，那霸機場二樓國內、國際航廈通道也可能遇到分店。",
+    tags: ["蘋果派", "甜點", "鎌倉品牌", "國際通"],
     position: [26.214197, 127.6856639],
     hours: "每日 09:00–17:00",
     maps: "https://maps.app.goo.gl/bBsvAiu2cG9MduWo7",
@@ -146,8 +157,17 @@ export const places: Place[] = [
     id: "aw-okinawa",
     name: "A&W 國際通り松尾店",
     nameJa: "A&W 国際通り松尾店",
-    note: "適合當作抵達沖繩後的第一餐。",
-    tags: ["漢堡", "美式餐廳", "沖繩限定"],
+    note: "日本分店集中在沖繩，評價很兩極。個人感受：上次吃的熱狗堡不推；經典漢堡比一般連鎖速食更有特色，整體還不錯。招牌飲料是草本風味的 Root Beer（麥根沙士），店內可免費續杯。",
+    tags: [
+      "漢堡",
+      "熱狗堡",
+      "Root Beer",
+      "麥根沙士",
+      "美式速食",
+      "沖繩限定",
+      "評價兩極",
+      "熱狗堡不推薦",
+    ],
     position: [26.2136313, 127.6807614],
     hours: "每日 09:00–21:00",
     maps: "https://maps.app.goo.gl/DoucLpkxsoUai5Qy5",
@@ -178,8 +198,8 @@ export const places: Place[] = [
     id: "oujima",
     name: "奧武島",
     nameJa: "奥武島",
-    note: "適合看海與散步，也可順遊中本鮮魚天婦羅店及奧武島貓咪布丁。",
-    tags: ["海景", "貓", "天婦羅", "布丁"],
+    note: "個人感受：島上其實沒什麼貓。天婦羅不錯吃，但阿婆的動作慢得離譜，要預留充足的等候時間；也可順遊奧武島貓咪布丁。",
+    tags: ["海景", "天婦羅", "布丁", "等候時間長"],
     position: [26.1297064, 127.7734784],
     hours: "無固定營業時間",
     maps: "https://www.google.com/maps/search/?api=1&query=Oujima+Okinawa",
@@ -209,7 +229,7 @@ export const places: Place[] = [
     id: "itoman-fish-market",
     name: "糸滿魚市場",
     nameJa: "糸満お魚センター",
-    note: "外側有大型停車場；可向市場店家購買海鮮後到戶外用餐區享用。",
+    note: "個人感受：整體很像上引水產。外側有大型停車場，可向市場店家購買海鮮後到戶外用餐區享用。",
     tags: ["海鮮", "生魚片", "壽司", "市場美食", "沖繩在地食材", "停車場"],
     position: [26.1380987, 127.6613785],
     hours: "週一至週五 09:00–18:00；週六、日 09:00–19:00",
@@ -229,8 +249,8 @@ export const places: Place[] = [
   draftRestaurant({
     id: "tsukemen-jinbei",
     name: "つけ麺 ジンベエ",
-    note: "位於東南植物樂園一帶，可搭配植物園行程安排。",
-    tags: ["沾麵", "拉麵", "沖繩中部"],
+    note: "個人感受：超好吃的沾麵，很推薦，但份量不小。位於東南植物樂園一帶，可搭配植物園行程安排。",
+    tags: ["沾麵", "拉麵", "沖繩中部", "推薦", "份量大"],
     position: [26.3626647, 127.8132367],
     hours: "每日 11:30–15:30",
     maps: "https://maps.app.goo.gl/Zp67PkgdFtrCkfhY8",
@@ -240,8 +260,8 @@ export const places: Place[] = [
     id: "southeast-botanical-gardens",
     name: "東南植物樂園",
     nameJa: "東南植物楽園",
-    note: "沖繩中部的大型植物園，可依季節安排日間或夜間燈飾行程。",
-    tags: ["植物園", "親子", "沖繩中部"],
+    note: "個人感受：是個神奇的冷門景點，很少看到有人去，但其實蠻有趣的；園內有一堆奇怪的動物可以餵，也可依季節安排夜間燈飾。",
+    tags: ["植物園", "冷門景點", "動物互動", "餵食", "親子", "沖繩中部"],
     position: [26.3762521, 127.8068397],
     hours: "週一至週五 09:30–21:00；週六、日 07:00–21:00",
     maps: "https://www.google.com/maps/search/?api=1&query=Southeast+Botanical+Gardens+Okinawa",
@@ -290,7 +310,7 @@ export const places: Place[] = [
     id: "restaurant-flipper",
     name: "潛水員牛排 Restaurant ふりっぱー",
     nameJa: "レストラン ふりっぱー",
-    note: "名護一帶的老字號牛排餐廳，可安排在前往水族館途中。",
+    note: "朋友評價：味道不如台灣牛排。這是名護一帶的老字號牛排餐廳，可安排在前往水族館途中。",
     tags: ["牛排", "名護", "午餐"],
     position: [26.5947861, 127.9594444],
     hours: "週一、二及週四至週日 10:30–14:00；週三休息",
@@ -331,8 +351,8 @@ export const places: Place[] = [
   draftRestaurant({
     id: "nanbu-soba",
     name: "南部そば",
-    note: "前次行程備註為 Tabelog 高評價沖繩麵店。",
-    tags: ["沖繩麵", "沖繩特色", "南部", "在地料理"],
+    note: "推薦的沖繩麵店，有三種不同的沖繩麵可選；Tabelog 評價也不錯。",
+    tags: ["沖繩麵", "沖繩特色", "南部", "在地料理", "推薦"],
     position: [26.1199386, 127.6676172],
     hours: "週一至週六 11:00–15:30；週日休息",
     maps: "https://maps.app.goo.gl/n3s5UHWzgCXKTF7z9",
@@ -382,8 +402,8 @@ export const places: Place[] = [
   draftRestaurant({
     id: "jimami-tofu-hanasho",
     name: "じーまーみ豆腐専門店 花商",
-    note: "牧志市場內的花生豆腐專賣店，可外帶冷藏。",
-    tags: ["花生豆腐", "沖繩特色", "牧志市場", "伴手禮"],
+    note: "上次沒吃到，這次想吃。位於牧志市場內，可外帶冷藏，也能順便逛逛周邊商店街。",
+    tags: ["花生豆腐", "沖繩特色", "牧志市場", "伴手禮", "想吃", "商店街"],
     position: [26.2133071, 127.6886349],
     hours: "週一至週六 09:00–18:00；週日休息",
     maps: "https://maps.app.goo.gl/hi9sn3jErfF3o7KP6",
@@ -413,8 +433,8 @@ export const places: Place[] = [
   draftRestaurant({
     id: "pork-tamago-makishi",
     name: "ポーたま 牧志市場店",
-    note: "沖繩豬肉蛋飯糰人氣店，早餐時段可能需要排隊。",
-    tags: ["豬肉蛋飯糰", "沖繩特色", "早餐", "牧志市場"],
+    note: "牧志市場店人超多，建議避開用餐時間，或改去其他分店吃。上次是在美國村吃，推薦苦瓜口味；苦瓜也是沖繩特產。",
+    tags: ["豬肉蛋飯糰", "苦瓜", "沖繩特色", "早餐", "牧志市場", "推薦", "排隊", "避開尖峰"],
     position: [26.2151837, 127.6879713],
     hours: "每日 07:00–20:00",
     maps: "https://maps.app.goo.gl/QZWKjfyNuDjQU1eSA",
@@ -434,8 +454,8 @@ export const places: Place[] = [
     id: "happy-pancake-umikaji",
     name: "幸福鬆餅 瀨長島 Umikaji Terrace 店",
     nameJa: "幸せのパンケーキ ウミカジテラス沖縄店",
-    note: "位於瀨長島 Umikaji Terrace 的海景鬆餅店。",
-    tags: ["鬆餅", "瀨長島", "海景", "咖啡廳"],
+    note: "個人看法：這是全國連鎖店，主要賣點是瀨長島海景；如果沒有要看海，就不用特地去。",
+    tags: ["鬆餅", "瀨長島", "海景", "咖啡廳", "全國連鎖"],
     position: [26.1765151, 127.640567],
     hours: "每日 11:00–21:00",
     maps: "https://maps.app.goo.gl/KTxhookTbXno6JLS6",
@@ -537,5 +557,77 @@ export const places: Place[] = [
     maps: "https://www.google.com/maps/place/%E6%95%98%E6%95%98%E8%8B%91+%E6%B2%96%E7%B9%A9%E6%B5%A6%E6%B7%BBPARCO+CITY%E5%BA%97/@26.2618793,127.6975576,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56ba83534ab69:0x1fe2d030a414b080!8m2!3d26.2618793!4d127.6975576!16s%2Fg%2F11h1fz347p",
     official: "https://www.jojoen.co.jp/shop/jojoen/okinawa-parco/",
     tabelogUrl: "https://tabelog.com/okinawa/A4703/A470404/47024401/",
+  }),
+  draftNonRestaurant(PlaceCategory.Shopping, {
+    id: "chiikawa-shisa-shop-urasoe-parco",
+    name: "吉伊卡哇 Shisa 伴手禮店 浦添 PARCO CITY",
+    nameJa: "シーサーのおみやげやさん サンエー浦添西海岸 PARCO CITY",
+    note: "吉伊卡哇官方常設專賣店，位於 PARCO CITY 三樓；以 Shisa 為主題，販售店舖限定與沖繩限定角色周邊。",
+    tags: ["吉伊卡哇", "Shisa", "角色周邊", "沖繩限定", "伴手禮", "PARCO CITY"],
+    position: [26.2617542, 127.6981799],
+    address: "沖繩縣浦添市西洲 3-1-1 PARCO CITY 3F",
+    hours: "每日 10:00–22:00",
+    maps: "https://www.google.com/maps/place/Shisa+no+Omiyage+Shop/@26.2617542,127.6981799,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56b00044a7e63:0x9d2537dbb40ff202!8m2!3d26.2617542!4d127.6981799!16s%2Fg%2F11vm3mt0h_",
+    official: "https://chiikawa-info.jp/shisa_omiyageyasan/index.html",
+  }),
+  draftNonRestaurant(PlaceCategory.Shopping, {
+    id: "chiikawa-shisa-shop-naha-airport",
+    name: "吉伊卡哇 Shisa 伴手禮店 那霸機場",
+    nameJa: "シーサーのおみやげやさん 那覇空港店",
+    note: "吉伊卡哇官方常設專賣店，位於那霸機場國際線航廈二樓；除了 Shisa 主題周邊，也有酸梅人與 Orion 啤酒等沖繩限定聯名商品。",
+    tags: ["吉伊卡哇", "Shisa", "角色周邊", "沖繩限定", "伴手禮", "那霸機場"],
+    position: [26.2072488, 127.6510018],
+    address: "沖繩縣那霸市鏡水 150 那霸機場國際線航廈 2F",
+    hours: "每日 07:00–20:30",
+    maps: "https://www.google.com/maps/place/%E3%82%B7%E3%83%BC%E3%82%B5%E3%83%BC%E3%81%AE%E3%81%8A%E3%81%BF%E3%82%84%E3%81%92%E3%82%84%E3%81%95%E3%82%93+%E9%82%A3%E8%A6%87%E7%A9%BA%E6%B8%AF%E5%BA%97/@26.2072488,127.6510018,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56900298034dd:0xf3daf5d07c21c048!8m2!3d26.2072488!4d127.6510018!16s%2Fg%2F11zww5pzkq",
+    official: "https://chiikawa-info.jp/shisa_omiyageyasan/naha/index.html",
+  }),
+  draftNonRestaurant(PlaceCategory.Lodging, {
+    id: "pension-makanalea-resort-okinawa",
+    name: "Pension Makanalea Resort Okinawa",
+    nameJa: "Pension Makanalea Resort Okinawa",
+    note: "本次 7 人住宿據點，入住 2026/10/06、退房 2026/10/10，共 4 晚。宜野灣市的整棟房源，約 145 平方公尺、4 間臥室，附免費停車位、廚房、洗衣烘衣設備與烤肉區；開車約 8 分鐘到美國村。",
+    tags: ["本次住宿", "7 人", "4 晚", "整棟房源", "免費停車", "可烤肉", "宜野灣"],
+    position: [26.2912, 127.7552],
+    address: "沖繩縣宜野灣市（Airbnb 公開的大致位置）",
+    hours: "入住 2026/10/06；退房 2026/10/10",
+    maps: "https://www.google.com/maps/search/?api=1&query=26.2912%2C127.7552",
+    official: "https://www.airbnb.com.tw/rooms/37759576",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "busena-underwater-observatory",
+    name: "部瀨名海中公園－海中展望塔",
+    nameJa: "ブセナ海中公園 海中展望塔",
+    note: "外觀看起來像海上的小燈塔；走過約 170 公尺的海上棧橋後，沿螺旋樓梯下到水深約 5 公尺處，可透過 24 面觀察窗看天然珊瑚與熱帶魚。10 月海中展望塔成人票 ¥1,050，也可購買搭配玻璃底船的成人套票 ¥2,100；風浪較大時可能臨時停止開放。適合排在前往美麗海水族館的途中。",
+    tags: ["海中展望塔", "熱帶魚", "珊瑚礁", "玻璃底船", "雨天備案", "名護"],
+    position: [26.542446, 127.930442],
+    address: "沖繩縣名護市喜瀨 1744-1 部瀨名海中公園",
+    hours: "4–10 月 09:00–18:00（最晚 17:30 入場）；全年無休，海況不佳時可能停業",
+    maps: "https://www.google.com/maps/place/%E9%83%A8%E7%80%A8%E5%90%8D%E6%B5%B7%E4%B8%AD%E5%85%AC%E5%9C%92+%E6%B5%B7%E4%B8%AD%E8%A7%80%E6%99%AF%E5%A1%94/@26.542446,127.930442,17z/data=!3m1!4b1!4m6!3m5!1s0x34e501d21348c0dd:0x5ff87c6f8ec09499!8m2!3d26.542446!4d127.930442!16s%2Fg%2F1tq8g94l",
+    official: "https://www.busena-marinepark.com/chinese_t/observatory.html",
+  }),
+  draftRestaurant({
+    id: "blue-seal-kokusai-dori",
+    name: "Blue Seal 國際通店",
+    nameJa: "ブルーシール 国際通り",
+    note: "源自美式冰淇淋文化、在沖繩發展成代表性品牌；逛國際通時可順路吃，不必特地繞去牧港本店。想吃沖繩特色口味可優先試紅芋、鹽金楚糕等，店內另有霜淇淋、可麗餅、奶昔與聖代。",
+    tags: ["冰淇淋", "沖繩品牌", "沖繩特色", "紅芋", "鹽金楚糕", "甜點", "國際通"],
+    position: [26.2154368, 127.6850578],
+    address: "沖繩縣那霸市牧志 1-2-32",
+    hours: "每日 09:30–23:00",
+    maps: "https://www.google.com/maps/place/Blue+Seal+%E5%9C%8B%E9%9A%9B%E9%80%9A%E5%BA%97/@26.2154368,127.6850578,17z/data=!3m1!4b1!4m6!3m5!1s0x34e5697767d5d0eb:0x530324c92d22e122!8m2!3d26.2154368!4d127.6850578!16s%2Fg%2F1tfw0slx",
+    official: "https://map.blueseal.co.jp/shop-info/?id=kokusaidori",
+  }),
+  draftRestaurant({
+    id: "blue-seal-makiminato-main",
+    name: "Blue Seal 牧港本店",
+    nameJa: "ブルーシール 牧港本店",
+    note: "Blue Seal 最具代表性的本店，2024 年全面改建後重新開幕；空間與座位比一般分店完整，也有停車場與得來速。離住宿及 PARCO CITY 不遠，可與國際通店保留到排定行程時再取捨。",
+    tags: ["冰淇淋", "沖繩品牌", "本店", "旗艦店", "免費停車", "得來速", "浦添"],
+    position: [26.2673347, 127.7214297],
+    address: "沖繩縣浦添市牧港 5-5-6",
+    hours: "每日 10:00–22:00（店內 21:00 停止受理、21:30 最後點餐）",
+    maps: "https://www.google.com/maps/place/BLUE+SEAL+%E7%89%A7%E6%B8%AF%E6%9C%AC%E5%BA%97/@26.2673347,127.7214297,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56b62fa9a7867:0xf056f74e99e16b7c!8m2!3d26.2673347!4d127.7214297!16s%2Fg%2F1tql2jnb",
+    official: "https://map.blueseal.co.jp/shop-info/?id=makiminato",
   }),
 ];

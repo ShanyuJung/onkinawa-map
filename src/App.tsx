@@ -9,18 +9,21 @@ const categories: FilterCategory[] = [
   PlaceCategory.Restaurant,
   PlaceCategory.Attraction,
   PlaceCategory.Shopping,
+  PlaceCategory.Lodging,
 ];
 
 const CATEGORY_COLORS: Record<PlaceCategory, string> = {
   [PlaceCategory.Restaurant]: "#e0a52b",
   [PlaceCategory.Attraction]: "#187f8c",
   [PlaceCategory.Shopping]: "#ee4b2b",
+  [PlaceCategory.Lodging]: "#7656a8",
 };
 
 const CATEGORY_CONTRAST: Record<PlaceCategory, string> = {
   [PlaceCategory.Restaurant]: "#15221f",
   [PlaceCategory.Attraction]: "#ffffff",
   [PlaceCategory.Shopping]: "#ffffff",
+  [PlaceCategory.Lodging]: "#ffffff",
 };
 
 type CategoryColorStyle = CSSProperties & {
@@ -228,14 +231,17 @@ export default function App() {
           <small>點選左側卡片查看位置</small>
         </div>
         <div className="map-legend">
-          {[PlaceCategory.Restaurant, PlaceCategory.Attraction, PlaceCategory.Shopping].map(
-            (category) => (
+          {[
+            PlaceCategory.Restaurant,
+            PlaceCategory.Attraction,
+            PlaceCategory.Shopping,
+            PlaceCategory.Lodging,
+          ].map((category) => (
             <span key={category}>
               <i className="dot" style={{ background: CATEGORY_COLORS[category] }} />
               {category}
             </span>
-            ),
-          )}
+          ))}
           <span>
             <i className="dot dark" />
             目前選取
