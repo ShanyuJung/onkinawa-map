@@ -399,6 +399,9 @@ a {
     min-height: 62vh;
     height: 62vh;
   }
+  .map-panel {
+    order: -1;
+  }
   .sidebar footer {
     margin-top: 20px;
   }
