@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
+import { CircleMarker, MapContainer, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import { PlaceCategory, places, type Place } from "./data/places";
 
 const ALL_CATEGORIES = "全部" as const;
@@ -153,7 +153,14 @@ export default function App() {
             <strong>{selected?.name ?? `${filteredPlaces.length} 個地點`}</strong>
           </div>
         </div>
-        <MapContainer center={[26.26, 127.73]} zoom={11} scrollWheelZoom className="map">
+        <MapContainer
+          center={[26.26, 127.73]}
+          zoom={11}
+          zoomControl={false}
+          scrollWheelZoom
+          className="map"
+        >
+          <ZoomControl position="topright" />
           <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
