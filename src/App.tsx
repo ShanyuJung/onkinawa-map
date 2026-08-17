@@ -1,8 +1,5 @@
-"use client";
-
 import { useState } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap } from "react-leaflet";
-import "leaflet/dist/leaflet.css";
 
 const places = [{
   id: "donki-kokusai", name: "唐吉訶德 國際通店", category: "購物",
@@ -21,7 +18,7 @@ function FlyToPlace({ position }: { position: [number, number] }) {
   return null;
 }
 
-export default function MapDemo() {
+export default function App() {
   const [selected, setSelected] = useState(places[0]);
   return (
     <main className="app-shell">
@@ -32,10 +29,7 @@ export default function MapDemo() {
           <p>把影片裡看到的店，整理成真正能排進行程的地圖。</p>
         </header>
         <div className="filters" aria-label="地點分類">
-          <button className="filter active">全部 <b>1</b></button>
-          <button className="filter">餐廳 <b>0</b></button>
-          <button className="filter">景點 <b>0</b></button>
-          <button className="filter">購物 <b>1</b></button>
+          <button className="filter active">全部 <b>1</b></button><button className="filter">餐廳 <b>0</b></button><button className="filter">景點 <b>0</b></button><button className="filter">購物 <b>1</b></button>
         </div>
         <article className="place-card" onClick={() => setSelected(places[0])}>
           <div className="card-topline"><span className="number">01</span><span className="category">SHOPPING</span><span className="status"><i />營業資訊已核對</span></div>
