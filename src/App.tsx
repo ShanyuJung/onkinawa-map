@@ -20,6 +20,20 @@ function FlyToPlace({ position }: { position: [number, number] }) {
 
 export default function App() {
   const [selected, setSelected] = useState(places[0]);
+  const [activeCategory, setActiveCategory] = useState("全部");
+  const categories = ["全部", "餐廳", "景點", "購物"];
+  const filteredPlaces = activeCategory === "全部"
+    ? places
+    : places.filter((place) => place.category === activeCategory);
+
+  function selectCategory(category: string) {
+    setActiveCategory(category);
+    const firstMatch = category === "全部"
+      ? places[0]
+      : places.find((place) => place.category === category);
+    if (firstMatch) setSelected(firstMatch);
+  }
+
   return (
     <main className="app-shell">
       <section className="sidebar">
@@ -29,16 +43,35 @@ export default function App() {
           <p>把影片裡看到的店，整理成真正能排進行程的地圖。</p>
         </header>
         <div className="filters" aria-label="地點分類">
-          <button className="filter active">全部 <b>1</b></button><button className="filter">餐廳 <b>0</b></button><button className="filter">景點 <b>0</b></button><button className="filter">購物 <b>1</b></button>
+          {categories.map((category) => {
+            const count = category === "全部" ? places.length : places.filter((place) => place.category === category).length;
+            return (
+              <button
+                key={category}
+                type="button"
+                className={`filter ${activeCategory === category ? "active" : ""}`}
+                aria-pressed={activeCategory === category}
+                onClick={() => selectCategory(category)}
+              >
+                {category} <b>{count}</b>
+              </button>
+            );
+          })}
         </div>
-        <article className="place-card" onClick={() => setSelected(places[0])}>
+        {filteredPlaces.length > 0 ? <article className="place-card" onClick={() => setSelected(filteredPlaces[0])}>
           <div className="card-topline"><span className="number">01</span><span className="category">SHOPPING</span><span className="status"><i />營業資訊已核對</span></div>
-          <h2>{places[0].name}</h2><p className="jp">ドン・キホーテ 国際通り店</p>
-          <div className="facts"><div><span>營業時間</span><strong>{places[0].hours}</strong></div><div><span>安排建議</span><strong>{places[0].stay}</strong></div></div>
-          <p className="description">{places[0].note}</p>
-          <div className="tags">{places[0].tags.map(tag => <span key={tag}>{tag}</span>)}</div>
-          <div className="actions"><a className="primary" href={places[0].maps} target="_blank" rel="noreferrer">開啟 Google Maps ↗</a><a className="secondary" href={places[0].official} target="_blank" rel="noreferrer">官方資料</a></div>
-        </article>
+          <h2>{filteredPlaces[0].name}</h2><p className="jp">ドン・キホーテ 国際通り店</p>
+          <div className="facts"><div><span>營業時間</span><strong>{filteredPlaces[0].hours}</strong></div><div><span>安排建議</span><strong>{filteredPlaces[0].stay}</strong></div></div>
+          <p className="description">{filteredPlaces[0].note}</p>
+          <div className="tags">{filteredPlaces[0].tags.map(tag => <span key={tag}>{tag}</span>)}</div>
+          <div className="actions"><a className="primary" href={filteredPlaces[0].maps} target="_blank" rel="noreferrer">開啟 Google Maps ↗</a><a className="secondary" href={filteredPlaces[0].official} target="_blank" rel="noreferrer">官方資料</a></div>
+        </article> : (
+          <div className="empty-state" role="status">
+            <span>0 PLACES</span>
+            <strong>目前沒有「{activeCategory}」資料</strong>
+            <p>之後從影片整理出的地點會出現在這裡。</p>
+          </div>
+        )}
         <footer>資料核對日期 · 2026.08.17</footer>
       </section>
       <section className="map-panel" aria-label="國際通地圖">
@@ -46,7 +79,7 @@ export default function App() {
         <MapContainer center={selected.position} zoom={16} scrollWheelZoom className="map">
           <TileLayer attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>' url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
           <FlyToPlace position={selected.position} />
-          <CircleMarker center={selected.position} radius={15} pathOptions={{ color: "#fff", weight: 4, fillColor: "#ee4b2b", fillOpacity: 1 }}><Popup><strong>{selected.name}</strong><br />{selected.address}</Popup></CircleMarker>
+          {filteredPlaces.length > 0 && <CircleMarker center={selected.position} radius={15} pathOptions={{ color: "#fff", weight: 4, fillColor: "#ee4b2b", fillOpacity: 1 }}><Popup><strong>{selected.name}</strong><br />{selected.address}</Popup></CircleMarker>}
         </MapContainer>
         <div className="route-note"><span>徒歩</span><strong>國際通中段</strong><small>牧志站約 600m · 美榮橋站約 500m</small></div>
         <div className="map-legend"><span><i className="dot orange" />已選地點</span><span><i className="dot dark" />行程路線</span></div>
