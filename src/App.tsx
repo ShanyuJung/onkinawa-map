@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type CSSProperties } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import { PlaceCategory, places, type Place } from "./data/places";
 
@@ -16,6 +16,27 @@ const CATEGORY_COLORS: Record<PlaceCategory, string> = {
   [PlaceCategory.Attraction]: "#187f8c",
   [PlaceCategory.Shopping]: "#ee4b2b",
 };
+
+const CATEGORY_CONTRAST: Record<PlaceCategory, string> = {
+  [PlaceCategory.Restaurant]: "#15221f",
+  [PlaceCategory.Attraction]: "#ffffff",
+  [PlaceCategory.Shopping]: "#ffffff",
+};
+
+type CategoryColorStyle = CSSProperties & {
+  "--category-color": string;
+  "--category-contrast": string;
+};
+
+function getCategoryStyle(category: FilterCategory): CategoryColorStyle {
+  if (category === ALL_CATEGORIES) {
+    return { "--category-color": "#15221f", "--category-contrast": "#ffffff" };
+  }
+  return {
+    "--category-color": CATEGORY_COLORS[category],
+    "--category-contrast": CATEGORY_CONTRAST[category],
+  };
+}
 
 type MappablePlace = Place & { position: [number, number] };
 
@@ -89,6 +110,7 @@ export default function App() {
                 key={category}
                 type="button"
                 className={`filter ${activeCategory === category ? "active" : ""}`}
+                style={getCategoryStyle(category)}
                 aria-pressed={activeCategory === category}
                 onClick={() => selectCategory(category)}
               >
@@ -102,6 +124,7 @@ export default function App() {
             <article
               key={place.id}
               className={`place-card ${selected?.id === place.id ? "selected" : ""}`}
+              style={getCategoryStyle(place.category)}
               onClick={() => setSelected(place)}
             >
               <div className="card-topline">
@@ -205,12 +228,14 @@ export default function App() {
           <small>點選左側卡片查看位置</small>
         </div>
         <div className="map-legend">
-          {[PlaceCategory.Shopping, PlaceCategory.Attraction].map((category) => (
+          {[PlaceCategory.Restaurant, PlaceCategory.Attraction, PlaceCategory.Shopping].map(
+            (category) => (
             <span key={category}>
               <i className="dot" style={{ background: CATEGORY_COLORS[category] }} />
               {category}
             </span>
-          ))}
+            ),
+          )}
           <span>
             <i className="dot dark" />
             目前選取
