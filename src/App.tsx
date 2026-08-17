@@ -17,17 +17,26 @@ const CATEGORY_COLORS: Record<PlaceCategory, string> = {
   [PlaceCategory.Shopping]: "#ee4b2b",
 };
 
+type MappablePlace = Place & { position: [number, number] };
+
+function hasPosition(place: Place): place is MappablePlace {
+  return place.position !== null;
+}
+
 function MapController({
   visiblePlaces,
   selected,
 }: {
-  visiblePlaces: Place[];
+  visiblePlaces: MappablePlace[];
   selected: Place | null;
 }) {
   const map = useMap();
   useEffect(() => {
-    if (selected) map.flyTo(selected.position, 15, { duration: 0.8 });
-    else if (visiblePlaces.length > 1)
+    if (selected) {
+      if (selected.position) map.flyTo(selected.position, 15, { duration: 0.8 });
+      return;
+    }
+    if (visiblePlaces.length > 1)
       map.fitBounds(
         visiblePlaces.map((place) => place.position),
         { padding: [55, 55] },
@@ -47,6 +56,7 @@ export default function App() {
         : places.filter((place) => place.category === activeCategory),
     [activeCategory],
   );
+  const mappablePlaces = useMemo(() => filteredPlaces.filter(hasPosition), [filteredPlaces]);
 
   function selectCategory(category: FilterCategory) {
     setActiveCategory(category);
@@ -97,9 +107,9 @@ export default function App() {
               <div className="card-topline">
                 <span className="number">{String(index + 1).padStart(2, "0")}</span>
                 <span className="category">{place.categoryEn}</span>
-                <span className="status">
+                <span className={`status ${place.verified === false ? "pending" : ""}`}>
                   <i />
-                  營業資訊已核對
+                  {place.verified === false ? "營業資訊待核對" : "營業資訊已核對"}
                 </span>
               </div>
               <h2>{place.name}</h2>
@@ -124,9 +134,11 @@ export default function App() {
                 <a className="primary" href={place.maps} target="_blank" rel="noreferrer">
                   開啟 Google Maps ↗
                 </a>
-                <a className="secondary" href={place.official} target="_blank" rel="noreferrer">
-                  官方資料
-                </a>
+                {place.official && (
+                  <a className="secondary" href={place.official} target="_blank" rel="noreferrer">
+                    官方資料
+                  </a>
+                )}
                 {place.tabelogUrl && (
                   <a className="secondary" href={place.tabelogUrl} target="_blank" rel="noreferrer">
                     Tabelog
@@ -165,8 +177,8 @@ export default function App() {
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
-          <MapController visiblePlaces={filteredPlaces} selected={selected} />
-          {filteredPlaces.map((place) => (
+          <MapController visiblePlaces={mappablePlaces} selected={selected} />
+          {mappablePlaces.map((place) => (
             <CircleMarker
               key={place.id}
               center={place.position}

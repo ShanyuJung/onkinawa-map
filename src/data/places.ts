@@ -9,14 +9,15 @@ type BasePlace = {
   name: string;
   nameJa: string;
   categoryEn: string;
-  position: [number, number];
+  position: [number, number] | null;
   address: string;
   hours: string;
   stay: string;
   note: string;
   tags: string[];
   maps: string;
-  official: string;
+  official?: string;
+  verified?: boolean;
 };
 
 type RestaurantPlace = BasePlace & {
@@ -30,6 +31,44 @@ type NonRestaurantPlace = BasePlace & {
 };
 
 export type Place = RestaurantPlace | NonRestaurantPlace;
+
+type DraftPlaceInput = Pick<
+  BasePlace,
+  "id" | "name" | "note" | "tags" | "maps" | "position" | "hours"
+> & {
+  nameJa?: string;
+  address?: string;
+  official?: string;
+};
+
+function draftRestaurant(
+  input: DraftPlaceInput & Pick<RestaurantPlace, "tabelogUrl">,
+): RestaurantPlace {
+  return {
+    ...input,
+    nameJa: input.nameJa ?? input.name,
+    category: PlaceCategory.Restaurant,
+    categoryEn: "RESTAURANT",
+    address: input.address ?? "請參考 Google Maps",
+    stay: "建議停留 45–90 分鐘",
+    verified: true,
+  };
+}
+
+function draftNonRestaurant(
+  category: PlaceCategory.Attraction | PlaceCategory.Shopping,
+  input: DraftPlaceInput,
+): NonRestaurantPlace {
+  return {
+    ...input,
+    nameJa: input.nameJa ?? input.name,
+    category,
+    categoryEn: category === PlaceCategory.Attraction ? "ATTRACTION" : "SHOPPING",
+    address: input.address ?? "請參考 Google Maps",
+    stay: category === PlaceCategory.Attraction ? "建議停留 60–120 分鐘" : "建議停留 45–90 分鐘",
+    verified: true,
+  };
+}
 
 export const places: Place[] = [
   {
@@ -92,4 +131,326 @@ export const places: Place[] = [
     maps: "https://www.google.com/maps/search/?api=1&query=Okinawa+Churaumi+Aquarium",
     official: "https://www.churaumi.okinawa/",
   },
+  draftRestaurant({
+    id: "mille-mele-kokusai",
+    name: "mille mele 國際通店",
+    nameJa: "mille mele ミレメーレ",
+    note: "國際通的蘋果派專賣店；那霸機場二樓國內、國際航廈通道也可能遇到分店。",
+    tags: ["蘋果派", "甜點", "國際通"],
+    position: [26.214197, 127.6856639],
+    hours: "每日 09:00–17:00",
+    maps: "https://maps.app.goo.gl/bBsvAiu2cG9MduWo7",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47030594/",
+  }),
+  draftRestaurant({
+    id: "aw-okinawa",
+    name: "A&W 國際通り松尾店",
+    nameJa: "A&W 国際通り松尾店",
+    note: "適合當作抵達沖繩後的第一餐。",
+    tags: ["漢堡", "美式餐廳", "沖繩限定"],
+    position: [26.2136313, 127.6807614],
+    hours: "每日 09:00–21:00",
+    maps: "https://maps.app.goo.gl/DoucLpkxsoUai5Qy5",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47020117/",
+  }),
+  draftRestaurant({
+    id: "kazuki-kumoji",
+    name: "Kazuki（一喜喜）",
+    note: "上次實際用餐評價：普通、偏拍照取向，價格稍貴，味道沒有特別突出，不推薦。",
+    tags: ["預約餐廳", "那霸", "晚餐", "不推薦"],
+    position: [26.218013, 127.678917],
+    hours: "週一至週六 17:30–22:00；週日休息",
+    maps: "https://maps.app.goo.gl/VQ4YoZmD4rQ9eqTZ9",
+    tabelogUrl: "https://tabelog.com/tw/okinawa/A4701/A470101/47000842/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "oujima",
+    name: "奧武島",
+    nameJa: "奥武島",
+    note: "適合看海與散步，也可順遊中本鮮魚天婦羅店及奧武島貓咪布丁。",
+    tags: ["海景", "貓", "天婦羅", "布丁"],
+    position: [26.1297064, 127.7734784],
+    hours: "無固定營業時間",
+    maps: "https://www.google.com/maps/search/?api=1&query=Oujima+Okinawa",
+  }),
+  draftRestaurant({
+    id: "manmanchan-okinawa",
+    name: "manmanchan 沖繩",
+    nameJa: "manmanchan沖縄",
+    note: "前次行程安排在敘敘苑之前，作為簡單墊胃的小吃。",
+    tags: ["小吃", "沖繩中部"],
+    position: [26.1931758, 127.6943079],
+    hours: "Google Maps 標示永久歇業",
+    maps: "https://maps.app.goo.gl/q9KEaBNdjTpitztD6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470401/47031122/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "naminoue-shrine",
+    name: "波上宮",
+    nameJa: "波上宮",
+    note: "位於那霸市、面向海岸的神社，可搭配波之上海灘與市區行程。",
+    tags: ["神社", "那霸", "海景"],
+    position: [26.2207369, 127.6711012],
+    hours: "每日 09:00–17:00",
+    maps: "https://maps.app.goo.gl/wfNBjcBtBT2JLr5Q9",
+  }),
+  draftRestaurant({
+    id: "sobe-okinawa-soba",
+    name: "楚辺",
+    nameJa: "楚辺そば",
+    note: "前次行程備註為知名沖繩麵店。",
+    tags: ["沖繩麵", "在地料理", "那霸"],
+    position: [26.2040596, 127.6846882],
+    hours: "每日 11:30–21:00",
+    maps: "https://maps.app.goo.gl/eFZbmSHrL6ffuYde6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47003995/",
+  }),
+  draftRestaurant({
+    id: "itoman-fish-market",
+    name: "糸滿魚市場",
+    nameJa: "糸満お魚センター",
+    note: "外側有大型停車場；可向市場店家購買海鮮後到戶外用餐區享用。",
+    tags: ["海鮮", "市場", "停車場"],
+    position: [26.1380987, 127.6613785],
+    hours: "週一至週五 09:00–18:00；週六、日 09:00–19:00",
+    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470402/47016707/",
+    maps: "https://g.co/kgs/7xmUPE7",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "okinawa-world",
+    name: "沖繩世界文化王國",
+    nameJa: "おきなわワールド",
+    note: "以玉泉洞與沖繩文化體驗為主的南部景點。",
+    tags: ["玉泉洞", "文化體驗", "南部"],
+    position: [26.1394397, 127.7504286],
+    hours: "每日 09:00–17:30",
+    maps: "https://www.google.com/maps/search/?api=1&query=Okinawa+World",
+  }),
+  draftRestaurant({
+    id: "tsukemen-jinbei",
+    name: "つけ麺 ジンベエ",
+    note: "位於東南植物樂園一帶，可搭配植物園行程安排。",
+    tags: ["沾麵", "拉麵", "沖繩中部"],
+    position: [26.3626647, 127.8132367],
+    hours: "每日 11:30–15:30",
+    maps: "https://maps.app.goo.gl/Zp67PkgdFtrCkfhY8",
+    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470301/47005756/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "southeast-botanical-gardens",
+    name: "東南植物樂園",
+    nameJa: "東南植物楽園",
+    note: "沖繩中部的大型植物園，可依季節安排日間或夜間燈飾行程。",
+    tags: ["植物園", "親子", "沖繩中部"],
+    position: [26.3762521, 127.8068397],
+    hours: "週一至週五 09:30–21:00；週六、日 07:00–21:00",
+    maps: "https://www.google.com/maps/search/?api=1&query=Southeast+Botanical+Gardens+Okinawa",
+  }),
+  draftRestaurant({
+    id: "seaside-cafe-hanon",
+    name: "Seaside Cafe Hanon",
+    note: "前次行程安排在下午或返程日上午，適合搭配北谷海景行程。",
+    tags: ["鬆餅", "咖啡廳", "北谷", "海景"],
+    position: [26.3161628, 127.7538499],
+    hours: "週一至週五 08:30–17:00；週六、日 08:30–19:00",
+    maps: "https://maps.app.goo.gl/gEdPS3AXrBujaJU66",
+    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470304/47013037/",
+  }),
+  draftRestaurant({
+    id: "paanilani",
+    name: "Hawaiian Pancakes House Paanilani",
+    note: "恩納村一帶的人氣夏威夷鬆餅店。",
+    tags: ["鬆餅", "早餐", "恩納村"],
+    position: [26.508997, 127.8722411],
+    hours: "每日 07:00–17:00",
+    maps: "https://maps.app.goo.gl/dW3YgchLsB2vvd9t8",
+    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470303/47011309/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "cape-manzamo",
+    name: "萬座毛",
+    nameJa: "万座毛",
+    note: "著名海岸景觀；休息區有餐飲、紀念品、ポーたま與義式冰淇淋。",
+    tags: ["海景", "恩納村", "伴手禮"],
+    position: [26.5050087, 127.8502564],
+    hours: "每日 08:00–20:00",
+    maps: "https://g.co/kgs/sA5cMnr",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "busena-marine-park",
+    name: "部瀨名海中公園",
+    nameJa: "ブセナ海中公園",
+    note: "可體驗玻璃底船與海中展望塔。",
+    tags: ["玻璃船", "海中展望塔", "親子"],
+    position: [26.5398188, 127.9358581],
+    hours: "每日 09:00–17:30",
+    maps: "https://www.google.com/maps/search/?api=1&query=Busena+Marine+Park",
+  }),
+  draftRestaurant({
+    id: "restaurant-flipper",
+    name: "潛水員牛排 Restaurant ふりっぱー",
+    nameJa: "レストラン ふりっぱー",
+    note: "名護一帶的老字號牛排餐廳，可安排在前往水族館途中。",
+    tags: ["牛排", "名護", "午餐"],
+    position: [26.5947861, 127.9594444],
+    hours: "週一、二及週四至週日 10:30–14:00；週三休息",
+    maps: "https://maps.app.goo.gl/VhNmYi4vH2NeQBqK6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47000967/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "kouri-island",
+    name: "古宇利島",
+    nameJa: "古宇利島",
+    note: "北部海景小島，可搭配古宇利大橋、海灘與蝦蝦飯。",
+    tags: ["海景", "北部", "古宇利大橋"],
+    position: [26.704251, 128.0180847],
+    hours: "無固定營業時間",
+    maps: "https://www.google.com/maps/search/?api=1&query=Kouri+Island+Okinawa",
+  }),
+  draftRestaurant({
+    id: "hyakunen-koya-ufuya",
+    name: "百年古家 大家",
+    nameJa: "百年古家 大家",
+    note: "上次實際用餐評價：不推薦。",
+    tags: ["阿古豬", "古民家", "預約餐廳", "名護", "不推薦"],
+    position: [26.6210197, 127.9636378],
+    hours: "每日 11:00–15:30、17:30–21:00",
+    maps: "https://g.co/kgs/UFzxUFp",
+    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47000122/",
+  }),
+  draftNonRestaurant(PlaceCategory.Shopping, {
+    id: "pokemon-center-okinawa",
+    name: "沖繩寶可夢中心",
+    nameJa: "ポケモンセンターオキナワ",
+    note: "位於永旺夢樂城沖繩來客夢內，可直接併入購物中心行程。",
+    tags: ["寶可夢", "購物", "沖繩來客夢"],
+    position: [26.3140852, 127.7962995],
+    hours: "每日 10:00–22:00",
+    maps: "https://maps.app.goo.gl/pb9T8WK243qabP9V7",
+  }),
+  draftRestaurant({
+    id: "nanbu-soba",
+    name: "南部そば",
+    note: "前次行程備註為 Tabelog 高評價沖繩麵店。",
+    tags: ["沖繩麵", "南部", "在地料理"],
+    position: [26.1199386, 127.6676172],
+    hours: "週一至週六 11:00–15:30；週日休息",
+    maps: "https://maps.app.goo.gl/n3s5UHWzgCXKTF7z9",
+    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470402/47002030/",
+  }),
+  draftRestaurant({
+    id: "kouri-shrimp",
+    name: "KOURI SHRIMP",
+    note: "古宇利島的人氣蝦蝦飯，可搭配島上行程。",
+    tags: ["蝦蝦飯", "古宇利島", "海景"],
+    position: [26.6969393, 128.0197864],
+    hours: "每日 11:00–16:00",
+    maps: "https://maps.app.goo.gl/J2d3yP1BCEbguuyb7",
+    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470202/47024391/",
+  }),
+  draftRestaurant({
+    id: "kushikado-kumoji",
+    name: "串角 久茂地店",
+    nameJa: "串角 久茂地店",
+    note: "提供喝到飽方案的串燒居酒屋。",
+    tags: ["串燒", "居酒屋", "喝到飽", "久茂地"],
+    position: [26.2196811, 127.6841059],
+    hours: "每日 17:00–翌日 01:00",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47000796/",
+    maps: "https://maps.app.goo.gl/RWaHncWhcWuJg2U59",
+  }),
+  draftRestaurant({
+    id: "kurumaebi-kitchen-tamaya",
+    name: "くるまえびキッチン TAMAYA",
+    note: "古宇利島附近的車海老料理餐廳。",
+    tags: ["車海老", "海鮮", "北部"],
+    position: [26.6728683, 128.0045032],
+    hours: "每日 11:30–18:00",
+    maps: "https://maps.app.goo.gl/PfPf72RPn4qxRMfBA",
+    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47023055/",
+  }),
+  draftRestaurant({
+    id: "yofukashi-ni-ice-naha",
+    name: "夜風にアイス 那覇店",
+    note: "國際通附近、前次行程記錄營業至深夜的冰淇淋店。",
+    tags: ["冰淇淋", "甜點", "深夜營業", "那霸"],
+    position: [26.2184951, 127.6877737],
+    hours: "每日 12:00–翌日 00:00",
+    maps: "https://maps.app.goo.gl/umM3QSN1N9WNAf8V6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47029987/",
+  }),
+  draftRestaurant({
+    id: "jimami-tofu-hanasho",
+    name: "じーまーみ豆腐専門店 花商",
+    note: "牧志市場內的花生豆腐專賣店，可外帶冷藏。",
+    tags: ["花生豆腐", "牧志市場", "伴手禮"],
+    position: [26.2133071, 127.6886349],
+    hours: "週一至週六 09:00–18:00；週日休息",
+    maps: "https://maps.app.goo.gl/hi9sn3jErfF3o7KP6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47029842/",
+  }),
+  draftRestaurant({
+    id: "jams-tacos-kokusai",
+    name: "JAM'S TACOS 國際通店",
+    nameJa: "JAM'S TACOS 国際通り店",
+    note: "供應塔可與塔可飯，店內風格偏咖啡廳。",
+    tags: ["塔可", "塔可飯", "國際通"],
+    position: [26.2169936, 127.6899146],
+    hours: "每日 11:00–21:00",
+    maps: "https://g.co/kgs/ZQa6ncn",
+    tabelogUrl: "https://tabelog.com/tw/okinawa/A4701/A470101/47029557/",
+  }),
+  draftRestaurant({
+    id: "menba-jintoku",
+    name: "麺場神徳",
+    note: "靠近久茂地住宿區，前次行程記錄為晚間營業至清晨的拉麵店。",
+    tags: ["拉麵", "宵夜", "久茂地", "深夜營業"],
+    position: [26.2178257, 127.6791647],
+    hours: "每日 19:00–翌日 07:00",
+    maps: "https://maps.app.goo.gl/zAyyrtz4B58AyQRA7",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47012552/",
+  }),
+  draftRestaurant({
+    id: "pork-tamago-makishi",
+    name: "ポーたま 牧志市場店",
+    note: "沖繩豬肉蛋飯糰人氣店，早餐時段可能需要排隊。",
+    tags: ["豬肉蛋飯糰", "早餐", "牧志市場"],
+    position: [26.2151837, 127.6879713],
+    hours: "每日 07:00–20:00",
+    maps: "https://maps.app.goo.gl/QZWKjfyNuDjQU1eSA",
+    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47015021/",
+  }),
+  draftNonRestaurant(PlaceCategory.Attraction, {
+    id: "shurijo-castle",
+    name: "首里城",
+    nameJa: "首里城公園",
+    note: "可搭乘單軌前往；重建與開放區域請依最新公告確認。",
+    tags: ["世界遺產", "歷史", "那霸", "單軌"],
+    position: [26.2170449, 127.7194833],
+    hours:
+      "免費區域：4–6、10–11 月 08:00–19:30；7–9 月至 20:30；12–3 月至 18:30",
+    maps: "https://maps.app.goo.gl/eykMch9azfu5hp8x6",
+  }),
+  draftRestaurant({
+    id: "happy-pancake-umikaji",
+    name: "幸福鬆餅 瀨長島 Umikaji Terrace 店",
+    nameJa: "幸せのパンケーキ ウミカジテラス沖縄店",
+    note: "位於瀨長島 Umikaji Terrace 的海景鬆餅店。",
+    tags: ["鬆餅", "瀨長島", "海景", "咖啡廳"],
+    position: [26.1765151, 127.640567],
+    hours: "每日 11:00–21:00",
+    maps: "https://maps.app.goo.gl/KTxhookTbXno6JLS6",
+    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470401/47019592/",
+  }),
+  draftNonRestaurant(PlaceCategory.Shopping, {
+    id: "narrative-outdoor-supply",
+    name: "Narrative Outdoor Supply",
+    note: "位於宜野灣的戶外用品選物店，販售露營裝備、服飾與在地選品。",
+    tags: ["戶外用品", "露營", "選物店", "宜野灣"],
+    position: [26.2889003, 127.7697472],
+    address: "沖繩縣宜野灣市新城 2-37-12",
+    hours: "週一及週三至週日 12:00–19:00；週二休息",
+    maps: "https://maps.app.goo.gl/UN4UiPmVMEnoR3zZ6",
+    official: "https://www.instagram.com/narrative_outdoor_supply/",
+  }),
 ];
