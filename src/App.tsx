@@ -139,7 +139,20 @@ export default function App() {
                 </span>
               </div>
               <h2>{place.name}</h2>
-              <p className="jp">{place.nameJa}</p>
+              <div className="place-subline">
+                <p className="jp">{place.nameJa}</p>
+                {place.tabelog?.rating && (
+                  <span className="tabelog-meta">
+                    <span className="tabelog-score">
+                      <span>Tabelog</span>
+                      <strong>{place.tabelog.rating.toFixed(2)}</strong>
+                    </span>
+                    {place.tabelog.verifiedAt && (
+                      <small>{place.tabelog.verifiedAt.replace(/-/g, ".")}</small>
+                    )}
+                  </span>
+                )}
+              </div>
               <div className="facts">
                 <div>
                   <span>營業時間</span>
@@ -165,8 +178,13 @@ export default function App() {
                     官方資料
                   </a>
                 )}
-                {place.tabelogUrl && (
-                  <a className="secondary" href={place.tabelogUrl} target="_blank" rel="noreferrer">
+                {place.tabelog && (
+                  <a
+                    className="secondary"
+                    href={place.tabelog.url}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
                     Tabelog
                   </a>
                 )}

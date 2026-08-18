@@ -21,14 +21,20 @@ type BasePlace = {
   verified?: boolean;
 };
 
+export type TabelogInfo = {
+  url: string;
+  rating?: number;
+  verifiedAt?: string;
+};
+
 type RestaurantPlace = BasePlace & {
   category: PlaceCategory.Restaurant;
-  tabelogUrl?: string;
+  tabelog?: TabelogInfo;
 };
 
 type NonRestaurantPlace = BasePlace & {
   category: PlaceCategory.Attraction | PlaceCategory.Shopping | PlaceCategory.Lodging;
-  tabelogUrl?: never;
+  tabelog?: never;
 };
 
 export type Place = RestaurantPlace | NonRestaurantPlace;
@@ -43,7 +49,7 @@ type DraftPlaceInput = Pick<
 };
 
 function draftRestaurant(
-  input: DraftPlaceInput & Pick<RestaurantPlace, "tabelogUrl">,
+  input: DraftPlaceInput & Pick<RestaurantPlace, "tabelog">,
 ): RestaurantPlace {
   return {
     ...input,
@@ -161,7 +167,11 @@ export const places: Place[] = [
     position: [26.214197, 127.6856639],
     hours: "每日 09:00–17:00",
     maps: "https://maps.app.goo.gl/bBsvAiu2cG9MduWo7",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47030594/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47030594/",
+      rating: 3.13,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "aw-okinawa",
@@ -183,7 +193,11 @@ export const places: Place[] = [
     position: [26.2136313, 127.6807614],
     hours: "每日 09:00–21:00",
     maps: "https://maps.app.goo.gl/DoucLpkxsoUai5Qy5",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47020117/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47020117/",
+      rating: 3.35,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "kazuki-kumoji",
@@ -204,7 +218,11 @@ export const places: Place[] = [
     position: [26.218013, 127.678917],
     hours: "週一至週六 17:30–22:00；週日休息",
     maps: "https://maps.app.goo.gl/VQ4YoZmD4rQ9eqTZ9",
-    tabelogUrl: "https://tabelog.com/tw/okinawa/A4701/A470101/47000842/",
+    tabelog: {
+      url: "https://tabelog.com/tw/okinawa/A4701/A470101/47000842/",
+      rating: 3.3,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "oujima",
@@ -227,7 +245,11 @@ export const places: Place[] = [
     hours: "4–9 月 10:30–19:00；10–3 月 10:30–18:00；週四休息",
     maps: "https://www.google.com/maps/search/?api=1&query=%E4%B8%AD%E6%9C%AC%E9%AE%AE%E9%AD%9A%E3%81%A6%E3%82%93%E3%81%B7%E3%82%89%E5%BA%97",
     official: "https://nakamotosengyoten.com/tw/",
-    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470403/47000227/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4704/A470403/47000227/",
+      rating: 3.46,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "naminoue-shrine",
@@ -248,7 +270,11 @@ export const places: Place[] = [
     position: [26.2040596, 127.6846882],
     hours: "每日 11:30–21:00",
     maps: "https://maps.app.goo.gl/eFZbmSHrL6ffuYde6",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47003995/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47003995/",
+      rating: 3.51,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "itoman-fish-market",
@@ -258,7 +284,11 @@ export const places: Place[] = [
     tags: ["海鮮", "生魚片", "壽司", "市場美食", "沖繩在地食材", "停車場"],
     position: [26.1380987, 127.6613785],
     hours: "週一至週五 09:00–18:00；週六、日 09:00–19:00",
-    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470402/47016707/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4704/A470402/47016707/",
+      rating: 3.45,
+      verifiedAt: "2026-08-18",
+    },
     maps: "https://g.co/kgs/7xmUPE7",
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
@@ -279,7 +309,11 @@ export const places: Place[] = [
     position: [26.3626647, 127.8132367],
     hours: "每日 11:30–15:30",
     maps: "https://maps.app.goo.gl/Zp67PkgdFtrCkfhY8",
-    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470301/47005756/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4703/A470301/47005756/",
+      rating: 3.44,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "southeast-botanical-gardens",
@@ -299,7 +333,11 @@ export const places: Place[] = [
     position: [26.3161628, 127.7538499],
     hours: "週一至週五 08:30–17:00；週六、日 08:30–19:00",
     maps: "https://maps.app.goo.gl/gEdPS3AXrBujaJU66",
-    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470304/47013037/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4703/A470304/47013037/",
+      rating: 3.48,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "paanilani",
@@ -309,7 +347,11 @@ export const places: Place[] = [
     position: [26.508997, 127.8722411],
     hours: "每日 07:00–17:00",
     maps: "https://maps.app.goo.gl/dW3YgchLsB2vvd9t8",
-    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470303/47011309/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4703/A470303/47011309/",
+      rating: 3.62,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "cape-manzamo",
@@ -340,7 +382,11 @@ export const places: Place[] = [
     position: [26.5947861, 127.9594444],
     hours: "週一、二及週四至週日 10:30–14:00；週三休息",
     maps: "https://maps.app.goo.gl/VhNmYi4vH2NeQBqK6",
-    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47000967/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4702/A470201/47000967/",
+      rating: 3.55,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "kouri-island",
@@ -361,7 +407,11 @@ export const places: Place[] = [
     position: [26.6210197, 127.9636378],
     hours: "每日 11:00–15:30、17:30–21:00",
     maps: "https://g.co/kgs/UFzxUFp",
-    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47000122/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4702/A470201/47000122/",
+      rating: 3.49,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Shopping, {
     id: "pokemon-center-okinawa",
@@ -381,7 +431,11 @@ export const places: Place[] = [
     position: [26.1199386, 127.6676172],
     hours: "週一至週六 11:00–15:30；週日休息",
     maps: "https://maps.app.goo.gl/n3s5UHWzgCXKTF7z9",
-    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470402/47002030/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4704/A470402/47002030/",
+      rating: 3.65,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "kouri-shrimp",
@@ -391,7 +445,11 @@ export const places: Place[] = [
     position: [26.6969393, 128.0197864],
     hours: "每日 11:00–16:00",
     maps: "https://maps.app.goo.gl/J2d3yP1BCEbguuyb7",
-    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470202/47024391/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4702/A470202/47024391/",
+      rating: 3.47,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "kushikado-kumoji",
@@ -401,7 +459,11 @@ export const places: Place[] = [
     tags: ["串燒", "居酒屋", "喝到飽", "久茂地"],
     position: [26.2196811, 127.6841059],
     hours: "每日 17:00–翌日 01:00",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47000796/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47000796/",
+      rating: 3.03,
+      verifiedAt: "2026-08-18",
+    },
     maps: "https://maps.app.goo.gl/RWaHncWhcWuJg2U59",
   }),
   draftRestaurant({
@@ -412,7 +474,11 @@ export const places: Place[] = [
     position: [26.6728683, 128.0045032],
     hours: "每日 11:30–18:00",
     maps: "https://maps.app.goo.gl/PfPf72RPn4qxRMfBA",
-    tabelogUrl: "https://tabelog.com/okinawa/A4702/A470201/47023055/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4702/A470201/47023055/",
+      rating: 3.47,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "yofukashi-ni-ice-naha",
@@ -422,7 +488,11 @@ export const places: Place[] = [
     position: [26.2184951, 127.6877737],
     hours: "每日 12:00–翌日 00:00",
     maps: "https://maps.app.goo.gl/umM3QSN1N9WNAf8V6",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47029987/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47029987/",
+      rating: 3.34,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "jimami-tofu-hanasho",
@@ -432,7 +502,11 @@ export const places: Place[] = [
     position: [26.2133071, 127.6886349],
     hours: "週一至週六 09:00–18:00；週日休息",
     maps: "https://maps.app.goo.gl/hi9sn3jErfF3o7KP6",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47029842/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47029842/",
+      rating: 3.11,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "jams-tacos-kokusai",
@@ -443,7 +517,11 @@ export const places: Place[] = [
     position: [26.2169936, 127.6899146],
     hours: "每日 11:00–21:00",
     maps: "https://g.co/kgs/ZQa6ncn",
-    tabelogUrl: "https://tabelog.com/tw/okinawa/A4701/A470101/47029557/",
+    tabelog: {
+      url: "https://tabelog.com/tw/okinawa/A4701/A470101/47029557/",
+      rating: 3.41,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "menba-jintoku",
@@ -453,7 +531,11 @@ export const places: Place[] = [
     position: [26.2178257, 127.6791647],
     hours: "每日 19:00–翌日 07:00",
     maps: "https://maps.app.goo.gl/zAyyrtz4B58AyQRA7",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47012552/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47012552/",
+      rating: 3.37,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "pork-tamago-makishi",
@@ -463,7 +545,11 @@ export const places: Place[] = [
     position: [26.2151837, 127.6879713],
     hours: "每日 07:00–20:00",
     maps: "https://maps.app.goo.gl/QZWKjfyNuDjQU1eSA",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47015021/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47015021/",
+      rating: 3.41,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "shurijo-castle",
@@ -484,7 +570,11 @@ export const places: Place[] = [
     position: [26.1765151, 127.640567],
     hours: "每日 11:00–21:00",
     maps: "https://maps.app.goo.gl/KTxhookTbXno6JLS6",
-    tabelogUrl: "https://tabelog.com/okinawa/A4704/A470401/47019592/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4704/A470401/47019592/",
+      rating: 3.07,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Shopping, {
     id: "narrative-outdoor-supply",
@@ -568,7 +658,11 @@ export const places: Place[] = [
     hours: "每日 11:30–21:30（午餐至 16:00）",
     maps: "https://www.google.com/maps/place/%E6%95%98%E6%95%98%E8%8B%91%E7%87%92%E8%82%89+%E6%AD%8C%E7%94%BA%E5%BA%97/@26.2246593,127.6981836,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56bdedd0627ab:0xdd481af5d7bbd2ca!8m2!3d26.2246593!4d127.6981836!16s%2Fg%2F11bbx0h68y",
     official: "https://www.jojoen.co.jp/shop/jojoen/okinawa-1/",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470103/47014638/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470103/47014638/",
+      rating: 3.08,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "jojoen-okinawa-urasoe-parco",
@@ -581,7 +675,11 @@ export const places: Place[] = [
     hours: "每日 11:00–22:00（最後點餐 21:00；午餐最後點餐 15:00）",
     maps: "https://www.google.com/maps/place/%E6%95%98%E6%95%98%E8%8B%91+%E6%B2%96%E7%B9%A9%E6%B5%A6%E6%B7%BBPARCO+CITY%E5%BA%97/@26.2618793,127.6975576,17z/data=!3m1!4b1!4m6!3m5!1s0x34e56ba83534ab69:0x1fe2d030a414b080!8m2!3d26.2618793!4d127.6975576!16s%2Fg%2F11h1fz347p",
     official: "https://www.jojoen.co.jp/shop/jojoen/okinawa-parco/",
-    tabelogUrl: "https://tabelog.com/okinawa/A4703/A470404/47024401/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4703/A470404/47024401/",
+      rating: 3.04,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Shopping, {
     id: "chiikawa-shisa-shop-urasoe-parco",
@@ -675,7 +773,11 @@ export const places: Place[] = [
     hours: "週一、二及週四至週日 11:00–約 22:30（22:00 停止入店）；週三休息",
     maps: "https://www.google.com/maps/search/?api=1&query=Jack%27s+Steak+House+Naha",
     official: "https://steak.co.jp/pages/shisetu",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47000054/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47000054/",
+      rating: 3.52,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Shopping, {
     id: "maasuya-kokusai-dori",
@@ -712,7 +814,11 @@ export const places: Place[] = [
     hours: "各店營業時間與公休日不同，請參考店舖公告",
     maps: "https://www.google.com/maps/search/?api=1&query=%E5%9B%BD%E9%9A%9B%E9%80%9A%E3%82%8A%E5%B1%8B%E5%8F%B0%E6%9D%91",
     official: "https://kokusaidoori-yataimura.okinawa/",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47023016/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47023016/",
+      rating: 3.13,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftRestaurant({
     id: "shisa-pan-mia",
@@ -725,7 +831,11 @@ export const places: Place[] = [
     hours: "每日 11:00–19:00；不定休，請事前確認 Instagram",
     maps: "https://www.google.com/maps/search/?api=1&query=%E3%82%B7%E3%83%BC%E3%82%B5%E3%83%BC%E3%83%91%E3%83%B3+MIA",
     official: "https://www.instagram.com/mia.sisapan/",
-    tabelogUrl: "https://tabelog.com/okinawa/A4701/A470101/47031347/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4701/A470101/47031347/",
+      rating: 3.23,
+      verifiedAt: "2026-08-18",
+    },
   }),
   draftNonRestaurant(PlaceCategory.Shopping, {
     id: "okinawa-outlet-mall-ashibinaa",

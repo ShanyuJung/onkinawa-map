@@ -211,6 +211,47 @@ a {
   margin: 0 0 18px;
   font-size: 12px;
 }
+.place-subline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+.place-subline .jp {
+  margin: 0;
+}
+.tabelog-meta {
+  display: inline-flex;
+  flex-direction: column;
+  flex: none;
+  align-items: flex-end;
+  gap: 3px;
+}
+.tabelog-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 7px;
+  border: 1px solid #eadbc7;
+  border-radius: 999px;
+  background: #fff8ee;
+  color: #8b8173;
+  font-size: 9px;
+  font-weight: 700;
+}
+.tabelog-score strong {
+  color: var(--orange);
+  font-size: 12px;
+}
+.tabelog-meta small {
+  padding-right: 7px;
+  color: #aaa093;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: right;
+}
 .facts {
   display: grid;
   grid-template-columns: 1fr 1fr;
