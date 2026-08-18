@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties } from "react";
+import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import { PlaceCategory, places, type Place } from "./data/places";
 
@@ -47,6 +47,33 @@ function hasPosition(place: Place): place is MappablePlace {
   return place.position !== null;
 }
 
+function highlightMatches(text: string | undefined, query: string): ReactNode {
+  if (!text) return text;
+
+  const keyword = query.trim();
+  if (!keyword) return text;
+
+  const normalizedText = text.toLocaleLowerCase();
+  const normalizedKeyword = keyword.toLocaleLowerCase();
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  let matchIndex = normalizedText.indexOf(normalizedKeyword);
+
+  while (matchIndex !== -1) {
+    if (matchIndex > cursor) parts.push(text.slice(cursor, matchIndex));
+    parts.push(
+      <mark key={`${matchIndex}-${cursor}`}>
+        {text.slice(matchIndex, matchIndex + keyword.length)}
+      </mark>,
+    );
+    cursor = matchIndex + keyword.length;
+    matchIndex = normalizedText.indexOf(normalizedKeyword, cursor);
+  }
+
+  if (cursor < text.length) parts.push(text.slice(cursor));
+  return parts.length ? parts : text;
+}
+
 function MapController({
   visiblePlaces,
   selected,
@@ -72,14 +99,29 @@ function MapController({
 
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<FilterCategory>(ALL_CATEGORIES);
+  const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState<Place | null>(null);
-  const filteredPlaces = useMemo(
-    () =>
-      activeCategory === ALL_CATEGORIES
-        ? places
-        : places.filter((place) => place.category === activeCategory),
-    [activeCategory],
-  );
+  const filteredPlaces = useMemo(() => {
+    const query = searchQuery.trim().toLocaleLowerCase();
+
+    return places.filter((place) => {
+      const matchesCategory =
+        activeCategory === ALL_CATEGORIES || place.category === activeCategory;
+      if (!matchesCategory || !query) return matchesCategory;
+
+      return [
+        place.name,
+        place.nameJa,
+        place.address,
+        place.note,
+        place.category,
+        place.categoryEn,
+        ...place.tags,
+      ]
+        .filter(Boolean)
+        .some((value) => value?.toLocaleLowerCase().includes(query));
+    });
+  }, [activeCategory, searchQuery]);
   const mappablePlaces = useMemo(() => filteredPlaces.filter(hasPosition), [filteredPlaces]);
 
   function selectCategory(category: FilterCategory) {
@@ -102,6 +144,31 @@ export default function App() {
           </h1>
           <p>把影片裡看到的店，整理成真正能排進行程的地圖。</p>
         </header>
+        <div className="search-box">
+          <span aria-hidden="true">⌕</span>
+          <input
+            type="search"
+            value={searchQuery}
+            placeholder="搜尋名稱、地區或標籤"
+            aria-label="搜尋地點"
+            onChange={(event) => {
+              setSearchQuery(event.target.value);
+              setSelected(null);
+            }}
+          />
+          {searchQuery && (
+            <button
+              type="button"
+              aria-label="清除搜尋"
+              onClick={() => {
+                setSearchQuery("");
+                setSelected(null);
+              }}
+            >
+              ×
+            </button>
+          )}
+        </div>
         <div className="filters" aria-label="地點分類">
           {categories.map((category) => {
             const count =
@@ -138,9 +205,9 @@ export default function App() {
                   {place.verified === false ? "營業資訊待核對" : "營業資訊已核對"}
                 </span>
               </div>
-              <h2>{place.name}</h2>
+              <h2>{highlightMatches(place.name, searchQuery)}</h2>
               <div className="place-subline">
-                <p className="jp">{place.nameJa}</p>
+                <p className="jp">{highlightMatches(place.nameJa, searchQuery)}</p>
                 {place.tabelog?.rating && (
                   <span className="tabelog-meta">
                     <span className="tabelog-score">
@@ -163,10 +230,10 @@ export default function App() {
                   <strong>{place.stay}</strong>
                 </div>
               </div>
-              <p className="description">{place.note}</p>
+              <p className="description">{highlightMatches(place.note, searchQuery)}</p>
               <div className="tags">
                 {place.tags.map((tag) => (
-                  <span key={tag}>{tag}</span>
+                  <span key={tag}>{highlightMatches(tag, searchQuery)}</span>
                 ))}
               </div>
               <div className="actions">
@@ -194,8 +261,8 @@ export default function App() {
           {filteredPlaces.length === 0 && (
             <div className="empty-state" role="status">
               <span>0 PLACES</span>
-              <strong>目前沒有「{activeCategory}」資料</strong>
-              <p>之後從影片整理出的地點會出現在這裡。</p>
+              <strong>找不到符合條件的地點</strong>
+              <p>試試其他關鍵字或切換分類。</p>
             </div>
           )}
         </div>
