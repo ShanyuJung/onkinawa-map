@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type CSSProperties, type ReactNode } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import { PlaceCategory, places, type Place } from "./data/places";
 
@@ -110,10 +110,12 @@ function MapController({
 }
 
 export default function App() {
+  const sidebarRef = useRef<HTMLElement>(null);
   const [activeCategory, setActiveCategory] = useState<FilterCategory>(ALL_CATEGORIES);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [showAllTags, setShowAllTags] = useState(false);
+  const [showScrollTop, setShowScrollTop] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
   const visibleTagOptions = useMemo(() => {
     if (showAllTags) return tagOptions;
@@ -150,6 +152,25 @@ export default function App() {
   }, [activeCategory, activeTag, searchQuery]);
   const mappablePlaces = useMemo(() => filteredPlaces.filter(hasPosition), [filteredPlaces]);
 
+  useEffect(() => {
+    const sidebar = sidebarRef.current;
+    const updateVisibility = () => {
+      const isMobile = window.matchMedia("(max-width: 820px)").matches;
+      setShowScrollTop((isMobile ? window.scrollY : (sidebar?.scrollTop ?? 0)) > 500);
+    };
+
+    window.addEventListener("scroll", updateVisibility, { passive: true });
+    window.addEventListener("resize", updateVisibility);
+    sidebar?.addEventListener("scroll", updateVisibility, { passive: true });
+    updateVisibility();
+
+    return () => {
+      window.removeEventListener("scroll", updateVisibility);
+      window.removeEventListener("resize", updateVisibility);
+      sidebar?.removeEventListener("scroll", updateVisibility);
+    };
+  }, []);
+
   function selectCategory(category: FilterCategory) {
     setActiveCategory(category);
     setSelected(null);
@@ -163,9 +184,15 @@ export default function App() {
     setSelected(null);
   }
 
+  function scrollToTop() {
+    const isMobile = window.matchMedia("(max-width: 820px)").matches;
+    if (isMobile) window.scrollTo({ top: 0, behavior: "smooth" });
+    else sidebarRef.current?.scrollTo({ top: 0, behavior: "smooth" });
+  }
+
   return (
     <main className="app-shell">
-      <section className="sidebar">
+      <section ref={sidebarRef} className="sidebar">
         <header className="brand">
           <div className="eyebrow">
             <span>OKINAWA · TRIP MAP</span>
@@ -400,6 +427,17 @@ export default function App() {
           </span>
         </div>
       </section>
+      <button
+        type="button"
+        className={`scroll-to-top ${showScrollTop ? "visible" : ""}`}
+        aria-label="回到頁面頂端"
+        onClick={scrollToTop}
+      >
+        <svg aria-hidden="true" viewBox="0 0 24 24">
+          <path d="M5 5h14M12 20V9m0 0-5 5m5-5 5 5" />
+        </svg>
+        <b>回到頂端</b>
+      </button>
     </main>
   );
 }
