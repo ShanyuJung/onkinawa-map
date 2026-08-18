@@ -37,15 +37,47 @@ export function TravelKnowledge({ onClose }: { onClose: () => void }) {
         </button>
         <header className="knowledge-header">
           <span>OKINAWA · TRAVEL NOTES</span>
-          <h1 id="knowledge-title">沖繩特色名產與料理</h1>
-          <p>從在地料理、傳統點心到琉球工藝，整理值得現吃與帶回家的沖繩特色。</p>
+          <h1 id="knowledge-title">沖繩旅遊小知識</h1>
+          <p>整理餐廳評分判讀、在地料理、傳統點心與值得帶回家的沖繩特色。</p>
         </header>
 
         <div className="knowledge-groups">
+          <section className="knowledge-group">
+            <div className="knowledge-group-title">
+              <span>01</span>
+              <h2>用餐攻略</h2>
+            </div>
+            <div className="souvenir-grid">
+              <article className="souvenir-card">
+                <div className="souvenir-name">
+                  <h3>Tabelog 評分怎麼看</h3>
+                  <small>食べログの点数</small>
+                </div>
+                <p>
+                  Tabelog
+                  分數不是評論的單純平均，而會考量評論者在各料理類型的影響度與有效評論數。官方將
+                  3.5～4.0 視為全體前約 3%，4.0 以上更只有前約 0.07%；3.5
+                  以下則也可能包含新店、評論較少或尚未被發現的好店。
+                </p>
+                <div className="buying-tip">
+                  <b>沖繩判讀方式</b>
+                  <span>
+                    沖繩不少好店因評論數較少，分數會集中在 3.0～3.4，因此 3.5
+                    已經相當突出。分數適合初步篩選，仍應搭配評論數、近期心得與個人經驗判斷。
+                  </span>
+                </div>
+                <div className="tags">
+                  <span>3.5 以上：前約 3%</span>
+                  <span>4.0 以上：前約 0.07%</span>
+                  <span>不是單純平均</span>
+                </div>
+              </article>
+            </div>
+          </section>
           {categories.map((category) => (
             <section key={category} className="knowledge-group">
               <div className="knowledge-group-title">
-                <span>{String(categories.indexOf(category) + 1).padStart(2, "0")}</span>
+                <span>{String(categories.indexOf(category) + 2).padStart(2, "0")}</span>
                 <h2>{category}</h2>
               </div>
               <div className="souvenir-grid">
