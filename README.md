@@ -29,11 +29,12 @@ npm run dev
 ## 常用指令
 
 - `npm run dev`：啟動本機開發伺服器
-- `npm run build`：執行 TypeScript 檢查並建立正式版本
+- `npm run build`：驗證地點資料、執行 TypeScript 檢查並建立正式版本
 - `npm run preview`：預覽正式版本
 - `npm run lint`：執行 ESLint
 - `npm run format`：使用 Prettier 格式化程式碼
 - `npm run format:check`：檢查程式碼格式
+- `npm run validate:data`：在手動編輯或爬蟲匯入後驗證完整地點資料
 
 ## 專案結構
 

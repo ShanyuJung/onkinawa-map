@@ -12,6 +12,18 @@ npm run build
 
 Use `npm run format` to apply the project formatting rules automatically.
 
+## Place data imports
+
+After manually editing or automatically crawling place data into `src/data/places.ts`, validate the complete dataset before committing, publishing, or starting another processing step:
+
+```bash
+npm run validate:data
+```
+
+The validator checks the complete `Place` structure, category-specific fields, coordinates, URLs, Tabelog ratings and dates, required text, duplicate IDs, and duplicate tags. A crawler or import script must treat a non-zero exit code as a hard failure and stop instead of committing or publishing invalid output.
+
+`npm run build` runs this validation automatically before TypeScript and Vite. Run `validate:data` directly after crawling when you want to catch invalid generated data before the full build.
+
 ## Commit messages
 
 This project follows [Conventional Commits 1.0.0-beta.4](https://www.conventionalcommits.org/en/v1.0.0-beta.4/).
