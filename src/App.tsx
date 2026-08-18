@@ -12,6 +12,18 @@ const categories: FilterCategory[] = [
   PlaceCategory.Lodging,
 ];
 
+const COLLAPSED_TAG_COUNT = 8;
+const tagOptions = Array.from(
+  places
+    .flatMap((place) => place.tags)
+    .reduce((counts, tag) => {
+      counts.set(tag, (counts.get(tag) ?? 0) + 1);
+      return counts;
+    }, new Map<string, number>()),
+)
+  .map(([tag, count]) => ({ tag, count }))
+  .sort((a, b) => b.count - a.count || a.tag.localeCompare(b.tag, "zh-Hant"));
+
 const CATEGORY_COLORS: Record<PlaceCategory, string> = {
   [PlaceCategory.Restaurant]: "#e0a52b",
   [PlaceCategory.Attraction]: "#187f8c",
@@ -100,14 +112,28 @@ function MapController({
 export default function App() {
   const [activeCategory, setActiveCategory] = useState<FilterCategory>(ALL_CATEGORIES);
   const [searchQuery, setSearchQuery] = useState("");
+  const [activeTag, setActiveTag] = useState<string | null>(null);
+  const [showAllTags, setShowAllTags] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
+  const visibleTagOptions = useMemo(() => {
+    if (showAllTags) return tagOptions;
+
+    const popularTags = tagOptions.slice(0, COLLAPSED_TAG_COUNT);
+    const selectedTag = activeTag && tagOptions.find(({ tag }) => tag === activeTag);
+    if (selectedTag && !popularTags.some(({ tag }) => tag === activeTag)) {
+      return [...popularTags.slice(0, -1), selectedTag];
+    }
+    return popularTags;
+  }, [activeTag, showAllTags]);
   const filteredPlaces = useMemo(() => {
     const query = searchQuery.trim().toLocaleLowerCase();
 
     return places.filter((place) => {
       const matchesCategory =
         activeCategory === ALL_CATEGORIES || place.category === activeCategory;
-      if (!matchesCategory || !query) return matchesCategory;
+      const matchesTag = !activeTag || place.tags.includes(activeTag);
+      if (!matchesCategory || !matchesTag) return false;
+      if (!query) return true;
 
       return [
         place.name,
@@ -121,11 +147,19 @@ export default function App() {
         .filter(Boolean)
         .some((value) => value?.toLocaleLowerCase().includes(query));
     });
-  }, [activeCategory, searchQuery]);
+  }, [activeCategory, activeTag, searchQuery]);
   const mappablePlaces = useMemo(() => filteredPlaces.filter(hasPosition), [filteredPlaces]);
 
   function selectCategory(category: FilterCategory) {
     setActiveCategory(category);
+    setSelected(null);
+  }
+
+  function resetFilters() {
+    setSearchQuery("");
+    setActiveCategory(ALL_CATEGORIES);
+    setActiveTag(null);
+    setShowAllTags(false);
     setSelected(null);
   }
 
@@ -188,6 +222,39 @@ export default function App() {
               </button>
             );
           })}
+        </div>
+        <div className="tag-filter">
+          <div className="tag-filter-heading">
+            <span>標籤搜尋</span>
+            <div className="tag-filter-actions">
+              <button type="button" onClick={resetFilters}>
+                重置篩選
+              </button>
+              <button
+                type="button"
+                aria-expanded={showAllTags}
+                onClick={() => setShowAllTags((current) => !current)}
+              >
+                {showAllTags ? "收合" : `展開全部 ${tagOptions.length}`}
+              </button>
+            </div>
+          </div>
+          <div className={`tag-options ${showAllTags ? "expanded" : ""}`}>
+            {visibleTagOptions.map(({ tag, count }) => (
+              <button
+                key={tag}
+                type="button"
+                className={activeTag === tag ? "active" : ""}
+                aria-pressed={activeTag === tag}
+                onClick={() => {
+                  setActiveTag((current) => (current === tag ? null : tag));
+                  setSelected(null);
+                }}
+              >
+                {tag} <b>{count}</b>
+              </button>
+            ))}
+          </div>
         </div>
         <div className="place-list">
           {filteredPlaces.map((place, index) => (
