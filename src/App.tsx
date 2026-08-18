@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
 import { CircleMarker, MapContainer, Popup, TileLayer, useMap, ZoomControl } from "react-leaflet";
 import { PlaceCategory, places, type Place } from "./data/places";
+import { TravelKnowledge } from "./TravelKnowledge";
 
 const ALL_CATEGORIES = "全部" as const;
 type FilterCategory = typeof ALL_CATEGORIES | PlaceCategory;
@@ -116,6 +117,7 @@ export default function App() {
   const [activeTag, setActiveTag] = useState<string | null>(null);
   const [showAllTags, setShowAllTags] = useState(false);
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [showKnowledge, setShowKnowledge] = useState(false);
   const [selected, setSelected] = useState<Place | null>(null);
   const visibleTagOptions = useMemo(() => {
     if (showAllTags) return tagOptions;
@@ -204,6 +206,13 @@ export default function App() {
             旅遊地圖
           </h1>
           <p>整理沖繩的餐廳、景點與購物資訊，方便規劃行程。</p>
+          <button
+            className="knowledge-trigger"
+            type="button"
+            onClick={() => setShowKnowledge(true)}
+          >
+            旅遊小知識 <span aria-hidden="true">＋</span>
+          </button>
         </header>
         <div className="search-box">
           <span aria-hidden="true">⌕</span>
@@ -438,6 +447,7 @@ export default function App() {
         </svg>
         <b>回到頂端</b>
       </button>
+      {showKnowledge && <TravelKnowledge onClose={() => setShowKnowledge(false)} />}
     </main>
   );
 }
