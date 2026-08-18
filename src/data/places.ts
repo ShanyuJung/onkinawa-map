@@ -883,6 +883,23 @@ export const places: Place[] = [
     maps: "https://www.google.com/maps/search/?api=1&query=%E3%82%B9%E3%83%9D%E3%83%BC%E3%83%84%E3%83%87%E3%83%9D+%E3%83%95%E3%83%A9%E3%83%83%E3%82%B0%E3%82%B7%E3%83%83%E3%83%97%E3%82%B9%E3%83%88%E3%82%A2%E5%A4%A9%E4%B9%85%E5%BA%97",
     official: "https://store.alpen-group.jp/Form/RealShop/ShopDetail.aspx?e=_&rsid=7512",
   }),
+  draftRestaurant({
+    id: "steak-house-88-chatan",
+    name: "Steak House 88 北谷美國村店",
+    nameJa: "ステーキハウス88 北谷アメリカンビレッジ店",
+    note: "沖繩限定的在地連鎖牛排館，這間在美國村 Depot Island，離住宿較近，想體驗沖繩牛排文化時算方便。個人感受：以前吃過，覺得以這個價位來說不太好吃，不是很推薦。",
+    tags: ["牛排", "沖繩在地連鎖", "美式餐廳", "美國村", "離住宿近", "不推薦"],
+    position: [26.3158, 127.757],
+    address: "沖繩縣中頭郡北谷町美濱 9-17 at's chatan 2F",
+    hours: "每日 11:00–23:00（最後點餐 22:00）；年末年初或天候不佳時請先確認",
+    maps: "https://www.google.com/maps/search/?api=1&query=%E3%82%B9%E3%83%86%E3%83%BC%E3%82%AD%E3%83%8F%E3%82%A6%E3%82%B988+%E5%8C%97%E8%B0%B7%E3%82%A2%E3%83%A1%E3%83%AA%E3%82%AB%E3%83%B3%E3%83%93%E3%83%AC%E3%83%83%E3%82%B8%E5%BA%97",
+    official: "https://s88.co.jp/shop/steak88/chatan/",
+    tabelog: {
+      url: "https://tabelog.com/okinawa/A4703/A470304/47022288/",
+      rating: 3.45,
+      verifiedAt: "2026-08-18",
+    },
+  }),
   draftNonRestaurant(PlaceCategory.Attraction, {
     id: "poke-lid-naha-shuri",
     name: "寶可夢人孔蓋－那霸市（首里）",
