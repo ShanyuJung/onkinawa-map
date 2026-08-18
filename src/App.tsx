@@ -168,15 +168,15 @@ export default function App() {
       <section className="sidebar">
         <header className="brand">
           <div className="eyebrow">
-            <span>OKINAWA · MAP 01</span>
+            <span>OKINAWA · TRIP MAP</span>
             <span>沖繩本島</span>
           </div>
           <h1>
-            沿途
+            沖繩
             <br />
-            旅遊情報
+            旅遊地圖
           </h1>
-          <p>把影片裡看到的店，整理成真正能排進行程的地圖。</p>
+          <p>整理沖繩的餐廳、景點與購物資訊，方便規劃行程。</p>
         </header>
         <div className="search-box">
           <span aria-hidden="true">⌕</span>
